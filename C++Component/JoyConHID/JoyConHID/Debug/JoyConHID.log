@@ -1,0 +1,17 @@
+﻿  JoyConHID.cpp
+c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(22): error C2039: 'vector': is not a member of 'std'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.14.26428\include\sstream(14): note: see declaration of 'std'
+c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(22): error C2143: syntax error: missing ';' before '<'
+c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(22): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(161): error C2065: 'joycons': undeclared identifier
+c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(161): error C2228: left of '.push_back' must have class/struct/union
+  c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(161): note: type is 'unknown-type'
+c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(170): error C2065: 'joycons': undeclared identifier
+c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(170): error C2228: left of '.size' must have class/struct/union
+  c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(170): note: type is 'unknown-type'
+c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(172): error C2065: 'joycons': undeclared identifier
+c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(172): error C2228: left of '.init_bt' must have class/struct/union
+c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(178): error C2065: 'joycons': undeclared identifier
+c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(178): error C2228: left of '.size' must have class/struct/union
+  c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(178): note: type is 'unknown-type'
+c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(180): error C2065: 'joycons': undeclared identifier
