@@ -1,0 +1,11 @@
+C:\Users\Vivian\Documents\JoyConGames\MyJoyConIntermediate\C# Component\MonogameJoycons\MonogameJoycons\bin\Debug\MonogameJoycons.dll
+C:\Users\Vivian\Documents\JoyConGames\MyJoyConIntermediate\C# Component\MonogameJoycons\MonogameJoycons\bin\Debug\MonogameJoycons.pdb
+C:\Users\Vivian\Documents\JoyConGames\MyJoyConIntermediate\C# Component\MonogameJoycons\MonogameJoycons\bin\Debug\MonoGame.Framework.dll
+C:\Users\Vivian\Documents\JoyConGames\MyJoyConIntermediate\C# Component\MonogameJoycons\MonogameJoycons\bin\Debug\MonoGame.Framework.dll.config
+C:\Users\Vivian\Documents\JoyConGames\MyJoyConIntermediate\C# Component\MonogameJoycons\MonogameJoycons\obj\Debug\MonogameJoycons.csprojAssemblyReference.cache
+C:\Users\Vivian\Documents\JoyConGames\MyJoyConIntermediate\C# Component\MonogameJoycons\MonogameJoycons\obj\Debug\MonogameJoycons.csproj.CoreCompileInputs.cache
+C:\Users\Vivian\Documents\JoyConGames\MyJoyConIntermediate\C# Component\MonogameJoycons\MonogameJoycons\obj\Debug\MonogameJoycons.csproj.CopyComplete
+C:\Users\Vivian\Documents\JoyConGames\MyJoyConIntermediate\C# Component\MonogameJoycons\MonogameJoycons\obj\Debug\MonogameJoycons.dll
+C:\Users\Vivian\Documents\JoyConGames\MyJoyConIntermediate\C# Component\MonogameJoycons\MonogameJoycons\obj\Debug\MonogameJoycons.pdb
+C:\Users\Vivian\Documents\JoyConGames\MyJoyConIntermediate\C# Component\MonogameJoycons\MonogameJoycons\bin\Debug\USBInterface.dll
+C:\Users\Vivian\Documents\JoyConGames\MyJoyConIntermediate\C# Component\MonogameJoycons\MonogameJoycons\bin\Debug\USBInterface.pdb

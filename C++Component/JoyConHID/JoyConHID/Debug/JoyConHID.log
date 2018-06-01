@@ -1,17 +1,37 @@
-﻿  JoyConHID.cpp
-c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(22): error C2039: 'vector': is not a member of 'std'
-  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.14.26428\include\sstream(14): note: see declaration of 'std'
-c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(22): error C2143: syntax error: missing ';' before '<'
-c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(22): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
-c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(161): error C2065: 'joycons': undeclared identifier
-c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(161): error C2228: left of '.push_back' must have class/struct/union
-  c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(161): note: type is 'unknown-type'
-c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(170): error C2065: 'joycons': undeclared identifier
-c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(170): error C2228: left of '.size' must have class/struct/union
-  c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(170): note: type is 'unknown-type'
-c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(172): error C2065: 'joycons': undeclared identifier
-c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(172): error C2228: left of '.init_bt' must have class/struct/union
-c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(178): error C2065: 'joycons': undeclared identifier
-c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(178): error C2228: left of '.size' must have class/struct/union
-  c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(178): note: type is 'unknown-type'
-c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(180): error C2065: 'joycons': undeclared identifier
+﻿  Joycon.cpp
+c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joycon.cpp(57): warning C4838: conversion from 'int' to 'uint8_t' requires a narrowing conversion
+c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joycon.cpp(103): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joycon.cpp(322): warning C4244: '=': conversion from 'float' to 'uint16_t', possible loss of data
+c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joycon.cpp(323): warning C4244: '=': conversion from 'float' to 'uint16_t', possible loss of data
+c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joycon.cpp(373): warning C4244: '=': conversion from 'const uint16_t' to 'uint8_t', possible loss of data
+c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joycon.cpp(408): warning C4244: '=': conversion from 'const uint16_t' to 'uint8_t', possible loss of data
+  JoyConHID.cpp
+c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(169): warning C4018: '<': signed/unsigned mismatch
+c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(177): warning C4018: '<': signed/unsigned mismatch
+c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(147): warning C4101: 'device_name': unreferenced local variable
+c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(146): warning C4101: 'written': unreferenced local variable
+c:\users\vivian\documents\joycongames\myjoyconintermediate\c++component\joyconhid\joyconhid\joyconhid.cpp(145): warning C4101: 'read': unreferenced local variable
+  Generating Code...
+JoyConHID.obj : error LNK2005: "class std::map<class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> >,class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> >,struct std::less<class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > >,class std::allocator<struct std::pair<class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const ,class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > > > > __cdecl LoadConfig(class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> >)" (?LoadConfig@@YA?AV?$map@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V12@U?$less@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@2@V?$allocator@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V12@@std@@@2@@std@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@@Z) already defined in Joycon.obj
+JoyConHID.obj : error LNK2005: "int __cdecl _floor(float)" (?_floor@@YAHM@Z) already defined in Joycon.obj
+JoyConHID.obj : error LNK2005: "void __cdecl accurateSleep(double,double)" (?accurateSleep@@YAXNN@Z) already defined in Joycon.obj
+JoyConHID.obj : error LNK2005: "float __cdecl clamp(float,float,float)" (?clamp@@YAMMMM@Z) already defined in Joycon.obj
+JoyConHID.obj : error LNK2005: "short __cdecl combine_gyro_data(unsigned char,unsigned char)" (?combine_gyro_data@@YAFEE@Z) already defined in Joycon.obj
+JoyConHID.obj : error LNK2005: "unsigned short __cdecl combine_uint8_t(unsigned char,unsigned char)" (?combine_uint8_t@@YAGEE@Z) already defined in Joycon.obj
+JoyConHID.obj : error LNK2005: "unsigned int __cdecl createMask(unsigned int,unsigned int)" (?createMask@@YAIII@Z) already defined in Joycon.obj
+JoyConHID.obj : error LNK2005: "void __cdecl hex_dump2(unsigned char *,int)" (?hex_dump2@@YAXPAEH@Z) already defined in Joycon.obj
+JoyConHID.obj : error LNK2005: "void __cdecl hex_dump(unsigned char *,int)" (?hex_dump@@YAXPAEH@Z) already defined in Joycon.obj
+JoyConHID.obj : error LNK2005: "void __cdecl hex_dump_0(unsigned char *,int)" (?hex_dump_0@@YAXPAEH@Z) already defined in Joycon.obj
+JoyConHID.obj : error LNK2005: "void __cdecl int_dump(unsigned char *,int)" (?int_dump@@YAXPAEH@Z) already defined in Joycon.obj
+JoyConHID.obj : error LNK2005: "double __cdecl lowpassFilter(double,double)" (?lowpassFilter@@YANNN@Z) already defined in Joycon.obj
+JoyConHID.obj : error LNK2005: "int __cdecl rand_range(int,int)" (?rand_range@@YAHHH@Z) already defined in Joycon.obj
+JoyConHID.obj : error LNK2005: "short __cdecl uint16_to_int16(unsigned short)" (?uint16_to_int16@@YAFG@Z) already defined in Joycon.obj
+JoyConHID.obj : error LNK2005: "short __cdecl unsignedToSigned16(unsigned short)" (?unsignedToSigned16@@YAFG@Z) already defined in Joycon.obj
+Joycon.obj : error LNK2019: unresolved external symbol _hid_open_path referenced in function "public: __thiscall Joycon::Joycon(struct hid_device_info *)" (??0Joycon@@QAE@PAUhid_device_info@@@Z)
+Joycon.obj : error LNK2019: unresolved external symbol _hid_write referenced in function "public: int __thiscall Joycon::get_spi_data(unsigned int,unsigned short,unsigned char *)" (?get_spi_data@Joycon@@QAEHIGPAE@Z)
+Joycon.obj : error LNK2019: unresolved external symbol _hid_read referenced in function "public: int __thiscall Joycon::get_spi_data(unsigned int,unsigned short,unsigned char *)" (?get_spi_data@Joycon@@QAEHIGPAE@Z)
+Joycon.obj : error LNK2019: unresolved external symbol _hid_set_nonblocking referenced in function "public: int __thiscall Joycon::init_bt(void)" (?init_bt@Joycon@@QAEHXZ)
+JoyConHID.obj : error LNK2019: unresolved external symbol _hid_init referenced in function "void __cdecl grabDevics(void)" (?grabDevics@@YAXXZ)
+JoyConHID.obj : error LNK2019: unresolved external symbol _hid_enumerate referenced in function "void __cdecl grabDevics(void)" (?grabDevics@@YAXXZ)
+JoyConHID.obj : error LNK2019: unresolved external symbol _hid_free_enumeration referenced in function "void __cdecl grabDevics(void)" (?grabDevics@@YAXXZ)
+C:\Users\Vivian\Documents\JoyConGames\MyJoyConIntermediate\C++Component\JoyConHID\Debug\JoyConHID.dll : fatal error LNK1120: 7 unresolved externals

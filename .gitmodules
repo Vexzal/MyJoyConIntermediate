@@ -1,0 +1,6 @@
+[submodule "AdditionalDependencies/HIDInterface"]
+	path = AdditionalDependencies/HIDInterface
+	url = https://github.com/temach/HIDInterface
+[submodule "AdditionalDependencies/hidapi"]
+	path = AdditionalDependencies/hidapi
+	url = https://github.com/signal11/hidapi

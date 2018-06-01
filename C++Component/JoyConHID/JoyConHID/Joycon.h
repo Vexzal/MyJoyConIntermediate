@@ -1,9 +1,9 @@
 #pragma once
 
 //#include <bitset>
-#include<bitset>
+//#include<bitset>
 #include <hidapi.h>
-#include <string>
+//#include <string>
 #include "tools.h"
 
 #define JOYCON_VENDOR 0x057e
@@ -17,7 +17,7 @@ class Joycon {
 
 public:
 	hid_device * handle;
-
+	uint8_t love;
 	std::string name;
 
 	int deviceNumber = 0; //left(0) or right(1) 

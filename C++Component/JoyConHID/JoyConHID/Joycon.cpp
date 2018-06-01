@@ -87,7 +87,7 @@ void Joycon::rumble(int frequency, int intensity) {
 		buf[1 + 0] = frequency;//(0, 255)		
 	}
 	else {
-		buf[1 + 4] = frequency;//(0, f255)
+		buf[1 + 4] = frequency;//(0, 255)
 	}
 
 	//set non-blocking:
