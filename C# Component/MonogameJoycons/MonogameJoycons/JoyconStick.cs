@@ -7,10 +7,14 @@ using System.Threading.Tasks;
 namespace Microsoft.Xna.Framework.Input
 {
     public struct JoyconStick
-    {
-        public UInt16 x;
-        public UInt16 y;
+    {        
         float CalX;
         float CalY;
+
+        public JoyconStick(Vector2 input)
+        {
+            CalX = input.X;
+            CalY = input.Y;
+        }
     }
 }

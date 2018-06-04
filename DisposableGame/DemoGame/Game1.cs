@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -13,6 +14,12 @@ namespace DemoGame
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         GamePadState exampState = GamePad.GetState(PlayerIndex.One);
+
+        SpriteFont debugFont;
+
+        JoyconPair oldState;
+        JoyconPair newState;
+        
         public Game1()
         {
             
@@ -29,10 +36,14 @@ namespace DemoGame
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            IsFixedTimeStep = false;
+            TargetElapsedTime = TimeSpan.FromSeconds(1);
+            Joycon.JoyInit();
+
             
             base.Initialize();
         }
-       
+        Color backGroundColor = Color.CornflowerBlue;
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
@@ -41,9 +52,10 @@ namespace DemoGame
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            JoyconGyrescope gyrescope = new JoyconGyrescope();
+            newState = new JoyconPair();
+            debugFont = Content.Load<SpriteFont>("Debug");
+
             
-            System.Console.WriteLine(gyrescope.offset.n);
 
             // TODO: use this.Content to load your game content here
         }
@@ -66,7 +78,21 @@ namespace DemoGame
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+            oldState = newState;
+            newState.GetState();
+
             
+            
+            //if (newState.Left.isButtonDown(JButtons.Down) && oldState.Left.isButtonUp(JButtons.Down))
+            //{
+            //    //Console.WriteLine("isChanged");
+            //    backGroundColor = Color.Red;
+            //}
+            //if (newState.Left.isButtonUp(JButtons.Down) && oldState.Left.isButtonDown(JButtons.Down))
+            //{
+            //    backGroundColor = Color.CornflowerBlue;
+            //}
+
             // TODO: Add your update logic here
 
             base.Update(gameTime);
@@ -78,10 +104,14 @@ namespace DemoGame
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-
+            GraphicsDevice.Clear(backGroundColor);
+            float frameRate = 1 / (float)gameTime.ElapsedGameTime.TotalSeconds;
+            frameRate = (float)Math.Truncate((double)frameRate * 100.0 / 100.0);
+            spriteBatch.Begin();
+            spriteBatch.DrawString(debugFont, "" + frameRate, Vector2.Zero, Color.LightGreen);
+            spriteBatch.End();
             // TODO: Add your drawing code here
-
+            
             base.Draw(gameTime);
         }
     }

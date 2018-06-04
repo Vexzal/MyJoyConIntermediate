@@ -15,5 +15,21 @@ namespace Microsoft.Xna.Framework.Input
         public float x;
         public float y;
         public float z;
+
+
+        public JoyconAccelerometer(Vector3 input)
+        {
+            x = input.X;
+            y = input.Y;
+            z = input.Z;
+
+            lastX = 0;
+            lastY = 0;
+            lastZ = 0;
+        }
+        public JoyconAccelerometer(JoyconAccelerometer accelerometer)
+        {
+            this = accelerometer;
+        }
     }
 }

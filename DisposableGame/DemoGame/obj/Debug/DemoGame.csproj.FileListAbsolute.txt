@@ -17,3 +17,9 @@ C:\Users\Vivian\Documents\JoyConGames\MyJoyConIntermediate\DisposableGame\DemoGa
 C:\Users\Vivian\Documents\JoyConGames\MyJoyConIntermediate\DisposableGame\DemoGame\obj\Debug\DemoGame.csproj.CopyComplete
 C:\Users\Vivian\Documents\JoyConGames\MyJoyConIntermediate\DisposableGame\DemoGame\obj\Debug\DemoGame.exe
 C:\Users\Vivian\Documents\JoyConGames\MyJoyConIntermediate\DisposableGame\DemoGame\obj\Debug\DemoGame.pdb
+C:\Users\Vivian\Documents\JoyConGames\MyJoyConIntermediate\DisposableGame\DemoGame\bin\DesktopGL\AnyCPU\Debug\DemoGame.exe.config
+C:\Users\Vivian\Documents\JoyConGames\MyJoyConIntermediate\DisposableGame\DemoGame\bin\DesktopGL\AnyCPU\Debug\MonogameJoycons.dll
+C:\Users\Vivian\Documents\JoyConGames\MyJoyConIntermediate\DisposableGame\DemoGame\bin\DesktopGL\AnyCPU\Debug\USBInterface.dll
+C:\Users\Vivian\Documents\JoyConGames\MyJoyConIntermediate\DisposableGame\DemoGame\bin\DesktopGL\AnyCPU\Debug\USBInterface.pdb
+C:\Users\Vivian\Documents\JoyConGames\MyJoyConIntermediate\DisposableGame\DemoGame\bin\DesktopGL\AnyCPU\Debug\MonogameJoycons.pdb
+C:\Users\Vivian\Documents\JoyConGames\MyJoyConIntermediate\DisposableGame\DemoGame\bin\DesktopGL\AnyCPU\Debug\Content\Debug.xnb

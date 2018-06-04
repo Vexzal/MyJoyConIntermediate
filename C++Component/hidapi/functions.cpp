@@ -1,7 +1,8 @@
 #pragma once
 
-
+//add new get input method where we get a pointer to the packet, then we return
 #include <stdint.h>
+#include <stdio.h>
 #include "hidapi.h"
 #include "tools.h"
 #define EXPORT __declspec(dllexport)
@@ -10,7 +11,7 @@
 #define JOYCON_L_BT 0x2006
 #define JOYCON_R_BT 0x2007
 #define PRO_CONTROLLER 0x2009
-#define JOYCON_CHARGING_GRIP 0x200e
+//#define JOYCON_CHARGING_GRIP 0x200e
 #define SERIAL_LEN 18
 #define PI 3.14159265359
 #define L_OR_R(lr) (lr == 1 ? 'L' : (lr == 2 ? 'R' : '?'))
@@ -18,14 +19,15 @@
 int res;
 bool bluetooth;
 int global_count = 0;
-unsigned char buf[65];
+
+int timing_byte = 0x0;
 
 struct calibrationData {
 	float acc_cal_coeff[3];
 	float gyro_cal_coeff[3];
 	float cal_x[1] = { 0.0f };
 	float cal_y[1] = { 0.0f };
-
+	
 	bool has_user_cal_stick_l = false;
 	bool has_usr_cal_stick_r = false;
 	bool has_user_cal_sensor = false;
@@ -45,7 +47,6 @@ struct calibrationData {
 	uint16_t stick_cal_y_r[0x3];
 
 };
-
 struct buttonStates {
 	
 	int RightA = 0;
@@ -61,6 +62,21 @@ struct buttonStates {
 	int SR = 0;
 	int stick_button = 0;
 };
+struct Vector2
+{
+	float X = 0;
+	float Y = 0;
+};
+struct Vector3 {
+	float X = 0;
+	float Y = 0;
+	float Z= 0;
+};
+struct doubleVector3
+{
+	Vector3 RPY;
+	Vector3 offset;
+};
 struct joyStick {
 	uint16_t x = 0;
 	uint16_t y = 0;
@@ -73,14 +89,12 @@ struct Gyroscope {
 	float roll = 0;
 
 	struct Offset {
-		int n = 0;
-
+		//int n = 0;
 		float pitch = 0;
 		float yaw = 0;
 		float roll = 0;
 	}offset;
 };
-
 struct Accelerometer {
 	float lastX = 0;
 	float lastY = 0;
@@ -111,7 +125,8 @@ struct brdcm_cmd_01 {
 	uint32_t offset;
 	uint8_t size;
 };
-int timing_byte = 0x0;
+
+
 
 
 
@@ -166,11 +181,53 @@ void send_subcommand(hid_device *handle, int command, int subcommand, uint8_t *d
 		memcpy(data, buf, 0x40);
 	}
 }
-
-int get_spi_data(hid_device *handle, uint32_t offset, const uint16_t read_len, uint8_t *test_buf)
+int get_spi_data_2(hid_device *handle, uint32_t offset, const uint16_t read_len, uint8_t *test_buf)
 {
 	int res;
+	uint8_t buf[49];
+	int error_reading = 0;
+	while (1)
+	{
+		memset(buf, 0, sizeof(buf));
+		auto hdr = (brdcm_hdr *)buf;
+		auto pkt = (brdcm_cmd_01*)(hdr + 1);
+
+		hdr->cmd = 1;
+		hdr->rumble[0] = timing_byte & 0xF;
+		timing_byte++;
+		pkt->subcmd = 0x10;
+		pkt->offset = offset;
+		pkt->size = read_len;
+		res = hid_write(handle, buf, sizeof(buf));
+
+		int retries = 0;
+		while (1) {
+			res = hid_read_timeout(handle, buf, sizeof(buf), 64);
+			if ((*(uint16_t*)&buf[0xD] == 0x1090) && (*(uint32_t*)&buf[0xF] == offset))
+				goto check_result;
+			retries++;
+			if (retries > 8 || res == 0)
+				break;
+		}
+		error_reading++;
+		if (error_reading > 20)
+			printf("returning error");
+			return 1;
+	}
+	check_result:
+	if (res >= 0x14 + read_len) {
+		for (int i = 0; i < read_len; i++) {
+			test_buf[i] = buf[0x14 + i];
+		}
+	}
+	return 0;
+}
+int get_spi_data(hid_device *handle, uint32_t offset, const uint16_t read_len, uint8_t *test_buf)
+{
+	printf("start spi function");
+	int res;
 	uint8_t buf[0x100];
+	printf("while loop enter\n");
 	while (1) {
 		memset(buf, 0, sizeof(buf));
 		auto hdr = (brdcm_hdr*)buf;
@@ -178,29 +235,37 @@ int get_spi_data(hid_device *handle, uint32_t offset, const uint16_t read_len, u
 		hdr->cmd = 1;
 		hdr->rumble[0] = timing_byte;
 		buf[1] = timing_byte;
-
+		
 		timing_byte++;
+		
 		if (timing_byte > 0xf)
 			timing_byte = 0x0;
 
 		pkt->subcmd = 0x10;
 		pkt->offset = offset;
 		pkt->size = read_len;
+		
 
 		for (int i = 11; i < 22; i++) {
 			buf[i] = buf[i + 3];
 		}
-
 		res = hid_write(handle, buf, sizeof(*hdr) + sizeof(*pkt));
+		printf("res write=%d \n", res);
 		res = hid_read(handle, buf, sizeof(buf));
+		printf("res read= %d\n", res);
+		//printf("break condition A %d %d \n", (*(uint16_t*)&buf[0xD]),0x1090);
 		if ((*(uint16_t*)&buf[0xD] == 0x1090) && (*(uint16_t*)&buf[0xF] == offset)) {
+			printf("Break\n");
+			
 			break;
 		}
+		
 	}
 	if (res >= 0x14 + read_len) {
 		for (int i = 0; i < read_len; i++) {
 			test_buf[i] = buf[0x14 + 1];
 		}
+		
 	}
 	return 0;
 }
@@ -241,8 +306,9 @@ int write_api_data(hid_device *handle,uint32_t offset, const uint16_t write_len,
 
 calibrationData getCalibration(hid_device *handle, int left_right)
 {
+	//printf("start internal function\n");
 	calibrationData data;
-
+	//printf("data declared\n");
 	memset(data.factory_stick_cal, 0, 0x12);
 	memset(data.user_stick_cal, 0, 0x16);
 	memset(data.sensor_model, 0, 0x12);
@@ -256,16 +322,17 @@ calibrationData getCalibration(hid_device *handle, int left_right)
 	memset(data.stick_cal_y_l, 0, sizeof(data.stick_cal_y_l));
 	memset(data.stick_cal_x_r, 0, sizeof(data.stick_cal_x_r));
 	memset(data.stick_cal_y_r, 0, sizeof(data.stick_cal_y_r));
-
-	get_spi_data(handle,0x6020, 0x18, data.factory_sensor_cal);
-	get_spi_data(handle,0x603D, 0x12, data.factory_stick_cal);
-	get_spi_data(handle,0x6080, 0x6, data.sensor_model);
-	get_spi_data(handle,0x6086, 0x12, data.stick_model);
-	get_spi_data(handle,0x6098, 0x12, &data.stick_model[0x12]);
-	get_spi_data(handle,0x8010, 0x16, data.user_stick_cal);
-	get_spi_data(handle,0x8026, 0x1A, data.user_sensor_cal);
+	//printf("Memset\n");
+	get_spi_data_2(handle,0x6020, 0x18, data.factory_sensor_cal);
+	//printf("spi first function\n");
+	get_spi_data_2(handle,0x603D, 0x12, data.factory_stick_cal);
+	get_spi_data_2(handle,0x6080, 0x6, data.sensor_model);
+	get_spi_data_2(handle,0x6086, 0x12, data.stick_model);
+	get_spi_data_2(handle,0x6098, 0x12, &data.stick_model[0x12]);
+	get_spi_data_2(handle,0x8010, 0x16, data.user_stick_cal);
+	get_spi_data_2(handle,0x8026, 0x1A, data.user_sensor_cal);
 	// get stick calibration data:
-
+	//printf("Get Spi\n");
 	// factory calibration:
 
 	if (left_right == 1 || left_right == 3) {
@@ -420,46 +487,45 @@ void CalcAnalogStick(
 
 }
 
-void CalcAnalogStick(JoyconState *jcState,calibrationData cal, int left_right)
+void CalcAnalogStick(joyStick *Stick,calibrationData *cal, int left_right)
 {
 	if (left_right == 1) {
 		CalcAnalogStick(
-			jcState->Stick.CalX,
-			jcState->Stick.CalY,
-			jcState->Stick.x,
-			jcState->Stick.y,
-			cal.stick_cal_x_l,
-			cal.stick_cal_y_l
+			Stick->CalX,
+			Stick->CalY,
+			Stick->x,
+			Stick->y,
+			cal->stick_cal_x_l,
+			cal->stick_cal_y_l
 		);
 	}
 	else if (left_right == 2) {
 		CalcAnalogStick(
-			jcState->Stick.CalX,
-			jcState->Stick.CalY,
-			jcState->Stick.x,
-			jcState->Stick.y,
-			cal.stick_cal_x_r,
-			cal.stick_cal_y_r
+			Stick->CalX,
+			Stick->CalY,
+			Stick->x,
+			Stick->y,
+			cal->stick_cal_x_r,
+			cal->stick_cal_y_r
 		);
 	}
 }
 
-
-
-void setGyroOffsets(JoyconState* jc)
+void setGyroOffsets(doubleVector3* gyrescope, int &n)
 {
 	float threshold = 0.1;
-	if (abs(jc->gyrescope.roll) > threshold || abs(jc->gyrescope.pitch) > threshold || abs(jc->gyrescope.yaw) > threshold)
+	if (abs(gyrescope->RPY.X) > threshold || abs(gyrescope->RPY.Y) > threshold || abs(gyrescope->RPY.Z) > threshold)
 	{
 		return;
 	}
 
-	jc->gyrescope.offset.n += 1;
-	jc->gyrescope.offset.roll = jc->gyrescope.offset.roll + ((jc->gyrescope.roll - jc->gyrescope.offset.roll) / jc->gyrescope.offset.n);
-	jc->gyrescope.offset.pitch = jc->gyrescope.offset.pitch + ((jc->gyrescope.pitch - jc->gyrescope.offset.pitch) / jc->gyrescope.offset.n);
-	jc->gyrescope.offset.yaw = jc->gyrescope.offset.yaw + ((jc->gyrescope.yaw - jc->gyrescope.offset.yaw) / jc->gyrescope.offset.n);
+	n += 1;
+	gyrescope->offset.X = gyrescope->offset.X + ((gyrescope->RPY.X- gyrescope->offset.X) / n);
+	gyrescope->offset.Y = gyrescope->offset.Y + ((gyrescope->RPY.Y- gyrescope->offset.Y) / n);
+	gyrescope->offset.Z = gyrescope->offset.Z + ((gyrescope->RPY.Z- gyrescope->offset.Z) / n);
 
 }
+
 extern "C"
 {
 	EXPORT void rumble(hid_device* handle, int left_right, int frequency, int intensity)
@@ -507,7 +573,7 @@ extern "C"
 
 	EXPORT hid_device* get_device(int device)
 	{
-
+		printf("handle called\n");
 		hid_device* handle;
 
 		struct hid_device_info *devs, *cur_dev;
@@ -518,14 +584,18 @@ extern "C"
 		cur_dev = devs;
 		while (cur_dev)
 		{
+			printf("Enter While: %d",controller_count);
+			printf("\n");
 			if (cur_dev->vendor_id == JOYCON_VENDOR)
 			{
 				if (cur_dev->product_id == JOYCON_L_BT || cur_dev->product_id == JOYCON_R_BT)
 				{
-					if (controller_count = device)
+					if (controller_count == device)
 					{
 						
 						handle = hid_open_path(cur_dev->path);
+						printf("Handle: %d",(int)handle);
+						printf(" endline \n");
 						hid_free_enumeration(devs);
 						return handle;
 					}
@@ -540,18 +610,60 @@ extern "C"
 
 	}
 
+	EXPORT int get_left_right(int device)
+	{
+		int left_right = 0; // 1 = left, 2 = right
+		struct hid_device_info *devs, *cur_dev;
+
+		int controller_count = 0;
+		devs = hid_enumerate(JOYCON_VENDOR, 0x0);
+		cur_dev = devs;
+		while (cur_dev)
+		{
+			
+			if (cur_dev->vendor_id == JOYCON_VENDOR)
+			{
+				if (cur_dev->product_id== JOYCON_L_BT || cur_dev->product_id == JOYCON_R_BT) {
+					if (controller_count == device)
+					{
+						if (cur_dev->product_id == JOYCON_L_BT)
+						{
+							printf("Got Left Joycon\n");
+							left_right = 1;
+
+						}
+						else if (cur_dev->product_id == JOYCON_R_BT)
+						{
+							printf("Got right Joycon\n");
+							left_right = 2;
+						}
+					}
+					controller_count++;
+				}
+			}
+			cur_dev = cur_dev->next;
+		}
+		hid_free_enumeration(devs);
+		return left_right;
+	}
+
 	EXPORT void init_bt(hid_device* handle, int reportMode, int left_right)
 	{
 		unsigned char buf[0x40];
 		memset(buf, 0, 0x40);
 
 		hid_set_nonblocking(handle, 0);
+		printf("Enable Vibration\n");
 		//enable vibration
 		buf[0] = 0x01;
 		send_subcommand(handle, 0x1, 0x48, buf, 1);
+		printf("Enable IMU\n");
 		//enable IMU data
 		buf[0] = 0x01;
 		send_subcommand(handle, 0x01, 0x40, buf, 1);
+		printf("Set Report Mode\n");
+		buf[0] = 0x30;
+		send_subcommand(handle, 0x01, 0x03, buf, 1); 
 
 		//getCalibration(handle, data, left_right);
 
@@ -559,130 +671,138 @@ extern "C"
 		return;
 	}
 	
-	EXPORT void handle_input(hid_device* handle, JoyconState* state, int left_right)
+	EXPORT unsigned char* get_packet(hid_device* handle)
+	{	
+		unsigned char buf[65];
+		memset(buf, 0, 65);
+		if (!handle)
+			return buf;
+
+		hid_read_timeout(handle, buf, 0x40, 30);
+
+		return buf;
+	}
+
+	EXPORT calibrationData* get_callibration(hid_device* handle, int left_right)
+	{
+		//printf("Start export function callibration\n");
+		calibrationData *ret;
+		//printf("Calibration data declared\n");
+		ret = &getCalibration(handle, left_right);
+		//printf("calibration data defined");
+		return ret;
+	}
+
+	EXPORT uint16_t get_buttons(hid_device* handle,unsigned char* packet, int left_right)
 	{
 		if (!handle)
-			return;
-		
-		calibrationData cal = getCalibration(handle, left_right);
-
-		//get input
-		memset(buf, 0, 65);
-
-		hid_read_timeout(handle, buf, 0x40, 20);
-		//bluetooth button
-		if (buf[0] == 0x3F) {
-			uint16_t old_buttons = state->buttons;
-			int8_t old_stick = state->dstick;
-
-			state->dstick = buf[3];
-		}
-
-
-		//input update packet:
-		//0x21 for buttons, 0x30 for gyro, 0x31 for NFC
-		if (buf[0] == 0x21 || buf[0] == 0x30 || buf[0] == 0x31) {
-
+			return 0;
+		//printf("get buttons left_right: %d\n", left_right);
+		if (packet[0] == 0x21 || packet[0] == 0x30 || packet[0] == 0x31) {
 			int offset = 0;
-			uint8_t *btn_data = buf + offset + 3;
-
+			uint8_t *btn_data = packet + offset + 3;
 			{
 				uint16_t states = 0;
 				if (left_right == 1) {
 					states = (btn_data[1] << 8) | (btn_data[2] & 0xFF);
+					//printf("Left States: %d\n", states);
 				}
 				else if (left_right == 2) {
 					states = (btn_data[1] << 8) | (btn_data[0] & 0xFF);
-
+					//printf("Right States: %d\n", states);
 				}
-				state->buttons = states;
+				return states;
 			}
-			//stick data
-			uint8_t *stick_data = buf + offset;
-			if (left_right == 1) {
-				stick_data += 6;
-			}
-			else if(left_right == 2)
-			{
-				stick_data += 9;
-			}
+		}
+	}
+	
+	EXPORT Vector2 get_joyStick(hid_device* handle, calibrationData* cal, unsigned char* packet, int left_right)
+	{
+		int offset = 0;
+		Vector2 ret;
+		joyStick stick;
 
-			uint16_t stick_x = stick_data[0] | ((stick_data[1] & 0xF) << 8);
-			uint16_t stick_y = (stick_data[1] >> 4 | (stick_data[2] << 4));
-			state->Stick.x = stick_x;
-			state->Stick.y = stick_y;
-			//calibrate
-			CalcAnalogStick(state,cal, left_right);
-
-			state->battery = (stick_data[1] & 0xF0) >> 4;
-
-			//Accelerometer
-			//Accelerometer data is absolute (m/s^2)
-			{
-				// get accelerometer X:
-				state->accelerometer.x = (float)(uint16_to_int16(buf[13] | (buf[14] << 8) & 0xFF00)) * cal.acc_cal_coeff[0];
-
-				// get accelerometer Y:
-				state->accelerometer.y = (float)(uint16_to_int16(buf[15] | (buf[16] << 8) & 0xFF00)) * cal.acc_cal_coeff[1];
-
-				// get accelerometer Z:
-				state->accelerometer.z = (float)(uint16_to_int16(buf[17] | (buf[18] << 8) & 0xFF00)) * cal.acc_cal_coeff[2];
-
-			}
-			// Gyroscope:
-			// Gyroscope data is relative (rads/s)
-			{
-
-				// get roll:
-				state->gyrescope.roll = (float)((uint16_to_int16(buf[19] | (buf[20] << 8) & 0xFF00)) - cal.sensor_cal[1][0]) * cal.gyro_cal_coeff[0];
-
-				// get pitch:
-				state->gyrescope.pitch = (float)((uint16_to_int16(buf[21] | (buf[22] << 8) & 0xFF00)) - cal.sensor_cal[1][1]) * cal.gyro_cal_coeff[1];
-
-				// get yaw:
-				state->gyrescope.yaw = (float)((uint16_to_int16(buf[23] | (buf[24] << 8) & 0xFF00)) - cal.sensor_cal[1][2]) * cal.gyro_cal_coeff[2];
-			}
-			// offsets:
-			{
-				setGyroOffsets(state);
-
-				state->gyrescope.roll -= state->gyrescope.offset.roll;
-				state->gyrescope.pitch -= state->gyrescope.offset.pitch;
-				state->gyrescope.yaw -= state->gyrescope.offset.yaw;
-			
-			}
-
-			if (left_right == 1)
-			{
-				state->bttnStates.DownB = (state->buttons & (1 << 0)) ? 1 : 0;
-				state->bttnStates.UpX = (state->buttons & (1 << 1)) ? 1 : 0;
-				state->bttnStates.RightA = (state->buttons & (1 << 2)) ? 1 : 0;
-				state->bttnStates.LeftY = (state->buttons & (1 << 3)) ? 1 : 0;
-				state->bttnStates.SR = (state->buttons & (1 << 4)) ? 1 : 0;
-				state->bttnStates.SL = (state->buttons & (1 << 5)) ? 1 : 0;
-				state->bttnStates.Trigger = (state->buttons & (1 << 6)) ? 1 : 0;
-				state->bttnStates.ZTrigger = (state->buttons &(1 << 7)) ? 1 : 0;
-				state->bttnStates.PlusMinus = (state->buttons &(1 << 8)) ? 1 : 0;
-				state->bttnStates.stick_button = (state->buttons &(1 << 11)) ? 1 : 0;
-				state->bttnStates.HomeCapture = (state->buttons &(1 << 13)) ? 1 : 0;
-			}
-			if (left_right == 2)
-			{
-				state->bttnStates.LeftY = (state->buttons & (1 << 0)) ? 1 : 0;
-				state->bttnStates.UpX = (state->buttons & (1 << 1)) ? 1 : 0;
-				state->bttnStates.DownB = (state->buttons & (1 << 2)) ? 1 : 0;
-				state->bttnStates.RightA = (state->buttons & (1 << 3)) ? 1 : 0;
-				state->bttnStates.SR = (state->buttons & (1 << 4)) ? 1 : 0;
-				state->bttnStates.SL = (state->buttons & (1 << 5)) ? 1 : 0;
-				state->bttnStates.Trigger = (state->buttons & (1 << 6)) ? 1 : 0;
-				state->bttnStates.ZTrigger = (state->buttons & (1 << 7)) ? 1 : 0;
-				state->bttnStates.PlusMinus = (state->buttons & (1 << 9)) ? 1 : 0;
-				state->bttnStates.stick_button = (state->buttons & (1 << 10)) ? 1 : 0;
-				state->bttnStates.HomeCapture = (state->buttons & (1 << 12)) ? 1 : 0;
-			}
-		}		
+		if (!handle)
+			return ret;
 		
+			
+
+		if (packet[0] == 0x21 || packet[0] == 0x30 || packet[0] == 0x31) {
+
+			{
+				uint8_t *stick_data = packet + offset;
+				if (left_right == 1) {
+					stick_data += 6;
+				}
+				else if (left_right == 2)
+				{
+					stick_data += 9;
+				}
+				else { ret.X = 0; ret.Y = 0; return ret; }
+
+				uint16_t stick_x = stick_data[0] | ((stick_data[1] & 0xf) << 8);
+				uint16_t stick_y = (stick_data[1] >> 4 | (stick_data[2] << 4));
+				stick.x = stick_x;
+				stick.y = stick_y;
+				
+				CalcAnalogStick(&stick, cal, left_right);
+
+				ret.X = stick.CalX;
+				ret.Y = stick.CalY;
+				return ret;
+			}
+		}
+		else { ret.X = 0; ret.Y = 0; return ret; }
+
 	}
 
+	EXPORT Vector3 get_accelerometer(hid_device *handle, calibrationData *cal, unsigned char* packet, int left_right)
+	{
+		Vector3 ret;
+		if (!handle)
+			return ret;
+		
+			
+
+		if (packet[0] == 0x21 || packet[0] == 0x30 || packet[0] == 0x31)
+		{
+			ret.X = (float)(uint16_to_int16(packet[13] | (packet[14] << 8) & 0xFF00)) * cal->acc_cal_coeff[0];
+			ret.Y = (float)(uint16_to_int16(packet[15] | (packet[16] << 8) & 0xFF00)) * cal->acc_cal_coeff[1];
+			ret.Z = (float)(uint16_to_int16(packet[17] | (packet[18] << 8) & 0xFF00)) * cal->acc_cal_coeff[2];
+		}
+
+	}
+	
+	EXPORT doubleVector3 get_gyrescope(hid_device *handle, calibrationData *cal, unsigned char *packet,int &n, int left_right)
+	{
+		//gyrescope data is relative radians per second(rads/s)
+		doubleVector3 ret;
+
+		if (!handle)
+			return ret;
+
+		if (packet[0] == 0x21 || packet[0] == 0x30 || packet[0] == 0x31)
+		{
+			//roll
+			ret.RPY.X = (float)(uint16_to_int16(packet[19] | (packet[20] << 8) & 0xFF00) - cal->sensor_cal[1][0]) * cal->gyro_cal_coeff[0];
+			//pitch
+			ret.RPY.Y = (float)(uint16_to_int16(packet[21] | (packet[22] << 8) & 0xFF00) - cal->sensor_cal[1][1]) * cal->gyro_cal_coeff[1];
+			//yaw
+			ret.RPY.Z = (float)(uint16_to_int16(packet[23] | (packet[24] << 8) & 0xFF00) - cal->sensor_cal[1][2]) * cal->gyro_cal_coeff[2];
+
+			//offsets
+			setGyroOffsets(&ret,n);
+
+			ret.RPY.X -= ret.offset.X;
+			ret.RPY.Y -= ret.offset.Y;
+			ret.RPY.Z -= ret.offset.Z;
+
+			return ret;
+		}
+	}
+	//replacing with distinct functions for different inputs.
+	
+
+	
 }
  

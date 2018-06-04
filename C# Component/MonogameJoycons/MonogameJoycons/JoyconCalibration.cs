@@ -8,6 +8,7 @@ namespace Microsoft.Xna.Framework.Input
 {
     public struct JoyconCalibration
     {
+        
         float[] acc_cal_coeff;
         float[] gyro_cal_coeff;
         float[] cal_x;

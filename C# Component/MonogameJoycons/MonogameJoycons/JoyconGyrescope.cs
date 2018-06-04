@@ -8,16 +8,39 @@ namespace Microsoft.Xna.Framework.Input
 {
     public struct JoyconGyrescope
     {
+        public float roll;
         public float pitch;
         public float yaw;
-        public float roll;
 
         public struct Offset
         {
-            int n;
-            float pitch;
-            float yaw;
-            float roll;
+            public static int n_left = 0;
+            public static int n_right = 0;
+            internal float roll;
+            internal float pitch;
+            internal float yaw;
+            
         }Offset offset;
+
+        public JoyconGyrescope(JoyconGyrescope gyrescope)
+        {
+            this = gyrescope;
+        }
+        public JoyconGyrescope(PairVector3 input)
+        {
+            roll = input.A.X;
+            pitch = input.A.Y;
+            yaw = input.A.Z;
+            offset = new Offset();
+            offset.roll = input.B.X;
+            offset.pitch = input.B.Y;
+            offset.yaw = input.B.Z;
+        }
+    }
+
+    public struct PairVector3
+    {
+        public Vector3 A;
+        public Vector3 B;
     }
 }
